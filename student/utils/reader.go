@@ -3,21 +3,21 @@ package utils
 import (
 	"bufio"
 	"fmt"
+	"guess/stats"
+	"math"
 	"os"
 	"strconv"
 )
 
-func Reader() ([]float64, []float64, error) {
+
+
+func Reader() {
 	fileScan := bufio.NewScanner(os.Stdin)
 	fileScan.Split(bufio.ScanLines)
-	var ys, xs []float64
+	var input []float64
 
-	fmt.Println("Enter value (or 'exit' to finish): ")
-	for {
-		if !fileScan.Scan() {
-			break
-		}
-
+	fmt.Println("\033[032mEnter value (or 'exit' to finish): \033[0m")
+	for fileScan.Scan() {
 		line := fileScan.Text()
 
 		// if line == "exit" {
@@ -26,24 +26,24 @@ func Reader() ([]float64, []float64, error) {
 
 		value, err := strconv.ParseFloat(line, 64)
 		if err != nil {
-			return nil, nil, fmt.Errorf("error parsing float from line '%v': %v", line, err)
+			fmt.Printf("error parsing float from line '%v': %v", line, err)
+			return
 		}
 
-		ys = append(ys, value)
+		input = append(input, value)
 
-		if len(ys) == 2 {
-			break
+		if len(input) > 1 {
+			lowerB, upperB := stats.Guesser(input)
+			fmt.Printf("%d %d\n", lowerB, upperB)
+		} else if len(input) == 0 {
+			fmt.Printf("%v %v\n", math.NaN(), math.NaN())
 		}
 
 		// Check if any error occurred during scanning
 		if err := fileScan.Err(); err != nil {
-			return nil, nil, fmt.Errorf("error readering input: %v", err)
+			fmt.Printf("error readering input: %v", err)
+			return
 		}
 	}
 
-	for i := 0; i < len(ys); i++ {
-		xs = append(xs, float64(i))
-	}
-
-	return xs, ys, nil
 }
