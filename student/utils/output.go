@@ -15,7 +15,7 @@ func Output(xs, ys []float64) {
 	fmt.Printf("\033[032mIntercept:\033[0m %.2f\n\n", intercept)
 
 	for i, num := range xs {
-		x, guess, residual = stats.Prectidor(num,ys[i], slope, intercept)
+		x, guess, residual = stats.Prectidor(num, ys[i], slope, intercept)
 
 		residsArray = append(residsArray, residual)
 		guessArray = append(guessArray, guess)
