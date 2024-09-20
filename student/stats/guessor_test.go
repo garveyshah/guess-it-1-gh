@@ -12,7 +12,7 @@ func isAlmostEqual(a, b, tolerance float64) bool {
 	return math.Abs(a-b) <= tolerance
 }
 
-func TestLRegression(t *testing.T) {
+func TestGuesser(t *testing.T) {
 	// Files containing test data
 	testData := []string{"../test_data/data1.txt", "data2.txt", "data3.txt"}
 
