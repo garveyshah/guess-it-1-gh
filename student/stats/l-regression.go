@@ -2,59 +2,45 @@ package stats
 
 import "math"
 
-func LinearRegression(ys []float64) (slope, intercept float64) {
-	// Number of data points(len(xs))
-	n := float64(len(ys))
+func Guesser(data []float64) (int, int) {
+	mean := Mean(data)
+	stdDev := StandardDev(data)
 
-	// Sums required for slope and intercept formukars
-	var sumX, sumY, sumXY, sumX2 float64
-	var xs []float64
-	for i := 0; i < len(ys); i++ {
-		xs = append(xs, float64(i))
-		sumX += xs[i]
-		sumY += ys[i]
-		sumXY += xs[i] * ys[i]
-		sumX2 += xs[i] * xs[i]
-	}
+	// Define prediction interval base Mean and Standard Deviation
 
-	// calculate slope (b1)
-	slope = (n*sumXY - sumX*sumY) / (n*sumX2 - sumX*sumX)
+	lowerB := int(math.Round(mean - 2*stdDev))
+	upperB := int(math.Round(mean + 2*stdDev))
+	return lowerB, upperB
 
-	// Calculate intercept (b0)
-	intercept = (sumY - slope*sumX) / n
-	return slope, intercept
 }
 
-// Predictor makes predictions and calculates residuals
-func Prectidor(x, y, slope, intercept float64) (float64, float64, float64) {
-	guess := (slope * x) + intercept
-	residual := y - guess
-	return x, guess, residual
+// Calculates and returns the average of the numbers
+func Mean(data []float64) float64 {
+	tnum := 0.0
+	count := float64(len(data))
+
+	for _, num := range data {
+		tnum += num
+	}
+	Averag := tnum / count
+	return Averag
 }
 
-// Calculate returns the upper and lower bounds for predictions
-func CalculateRange(guessArray []float64, stdError float64) (float64, float64) {
-	var upperB, lowerB float64
-
-	for _, guess := range guessArray {
-		upperB = guess + (stdError * 3)
-		lowerB = guess - (stdError * 3)
-	}
-	return upperB, lowerB
-}
-
-// StandardError calculates the standard error of the residuals
-func StandardError(residuals []float64) float64 {
-	n := len(residuals)
-	var ssd float64
-
-	if n <= 2 {
-		return math.NaN()
+// Calculates the standard deviation and variance of a set of data
+func StandardDev(data []float64) float64 {
+	mean := Mean(data)
+	var (
+		ss       float64
+		variance float64
+	)
+	// calculate standard deviation and variance
+	count := len(data)
+	for _, value := range data {
+		ss += ((value - mean) * (value - mean))
 	}
 
-	for _, num := range residuals {
-		ssd += num * num
-	}
-	stdError := ssd / float64(n-2)
-	return float64(math.Sqrt(stdError))
+	variance = ss / float64(count)
+
+	standardDev := math.Sqrt(variance)
+	return standardDev
 }
